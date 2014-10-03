@@ -1,0 +1,5 @@
+NAME REMAP
+DESCRIPTION 'Remap - v1.02 - (C) Copyright 2010 R.L.Walsh'
+PROTMODE
+BASE=0x10000
+

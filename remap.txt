@@ -1,0 +1,137 @@
+_______________________________________________________________________________
+_______________________________________________________________________________
+
+  Readme for Remap v1.02 
+
+  Copyright (c) 2010 Richard L Walsh
+  Licensed under the Mozilla Public License v1.1
+
+_______________________________________________________________________________
+
+  Contents
+_______________________________________________________________________________
+
+  * Overview
+  * Installation
+  * Options
+  * Changes
+  * Files
+
+_______________________________________________________________________________
+
+  Overview
+_______________________________________________________________________________
+
+Remap v1.02 is a developer's tool that reformats and demangles IBM-style
+map files to make them more informative and easier to use.
+
+- All the sections of a map file are consolidated into a unified listing
+  by address, eliminating the need to scroll through multiple listings.
+
+- Internal names of functions and methods are demangled;  the external
+  names of imports and exports are left as-is.  Demanglers for GCC and
+  VACPP are included but an external demangler can be used instead.
+
+- Meta-data for a symbol (e.g. the fact that it's an export, vtable, etc)
+  is rendered as a set of flags that highlight its special attributes.
+
+- Imports are organized by module and ordinal or external name.
+
+- A separate alpha listing of publics ignores leading underscores so you
+  don't have to know how a symbol is decorated to find it.
+
+Remap also works around a bug in ilink's listings of publics when there
+are more than 54k symbols.  Neither list contains all available symbols,
+so Remap reads both to create a complete listing.  For these files,
+Remap's demangle-only listing may be larger than the original
+
+Remap offers a range of options including a demangle-only option that's
+useful for creating .sym files with demangled names.  The file it creates
+is formatted like the original but resorted by the demangled names.
+
+_______________________________________________________________________________
+
+  Installation
+_______________________________________________________________________________
+
+Remap's files can go into any directory.  Since it is a commandline tool,
+putting it in a directory on your PATH may be helpful.  However, this
+directory does not have to be on your LIBPATH.  If Remap needs to use
+demangl.dll (the VACPP demangler), it will load it dynamically and will
+look in the same directory as remap.exe if it isn't found on the LIBPATH.
+
+_______________________________________________________________________________
+
+  Options
+_______________________________________________________________________________
+
+Running Remap without any arguments displays this help screen:
+
+ remap v1.02 - (C)2010  R L Walsh
+ Reformats and demangles IBM-style .map files.
+
+ Usage:  remap [-options] [optional_files] mapfile[.map]
+ General options:
+   -a  show demangled method arguments
+   -d  demangle only, don't reformat
+   -n  don't demangle symbols
+   -m  include linker warning messages (errors are always displayed)
+   -o  specify output file             (default: *.remap or *.demap)
+   -w  preserve whitespace in symbols  (default: replace with undersores)
+ Demangler options:
+   -g  use builtin GCC demangler       (default)
+   -v  use VAC demangler               (requires demangl.dll)
+   -x  use specified demangler         (example: "myfilt.exe -z -n yyy")
+
+Notes:
+- options are not case-sensitive and you can use either '-' or '/'
+
+- the default extension for Remap's output file is ".remap";
+  if you specify '-d' (demangle-only), it's ".demap"
+
+- to generate demangled .sym files, use the '-d' option (demangle-only),
+  then pass the output file to mapsym.exe;  for example:
+    remap abc
+    mapsym abc.demap
+
+- when using an external demangler ('-x' option), enclose its entire
+  commandline in quotes
+
+- Remap's parsing of its commandline is more flexible than the 'Usage' line
+  above suggests.  Options and optional files can be specified in any order,
+  as long as the filenames appear in the same order as the options that
+  require them.  For example, all of these commandlines are equivalent:
+    remap -ox abc.mymap "myfilt.exe -z" abc.map
+    remap abc.map -xo "myfilt.exe -z" abc.mymap
+    remap -o abc.mymap abc.map -x "myfilt.exe -z"
+
+_______________________________________________________________________________
+
+  Changes
+_______________________________________________________________________________
+
+v1.02
+Fix:  Mapsym produces defective .sym files when symbols exceed 255 characters.
+      In demangle-only mode (option 'd') which is intended for use with mapsym,
+      Remap now truncates symbols over 255 characters & adds an elipsis ('...')
+      at the end of the name.
+
+_______________________________________________________________________________
+
+  Files
+_______________________________________________________________________________
+
+The Remap v1.02 archive (remap102.zip) contains these files:
+
+  remap.exe           the Remap executable
+  remap.sym           Remap's public symbols
+  remap.txt           this file
+  remap-src.zip       source code for Remap
+  demangl.dll         the demangler used for VACPP symbols
+
+_______________________________________________________________________________
+
+Rich Walsh <rich@e-vertise.com>
+September 6, 2010
+_______________________________________________________________________________
+
